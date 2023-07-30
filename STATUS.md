@@ -56,8 +56,14 @@ No statements have been formalised here.
 ## Chapter 10
 
 Ex 1 : done
+Ex 2 : part a has statment written, part b done
+Ex 3 : Part a done, part b and c have statment written
+Ex 4 : Part c done, part a and b have statment written
+Ex 5 : part a done, part b and c have one sorry left each, mostly done
 
 ## Chapters 11-12
+
+nothing formalised
 
 ## Chapter 13
 
