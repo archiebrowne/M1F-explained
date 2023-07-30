@@ -1,6 +1,5 @@
 import Mathlib.Tactic
 
-
 namespace Chapter10.Exercise05
 
 lemma part_a (m n a : ℤ) (hmn : Int.gcd m n = 1) (hm : m ∣ a) (hn : n ∣ a) : (m * n) ∣ a := by 
@@ -32,8 +31,14 @@ lemma part_a (m n a : ℤ) (hmn : Int.gcd m n = 1) (hm : m ∣ a) (hn : n ∣ a)
     _ = (n * e) * m := by rw [he]
     _ = m * n * e := by ring
 
-lemma part_b (m n : ℤ) (hmn : Int.gcd m n ≠ 1) : ∃ (a : ℤ), (m ∣ a) ∧ (n ∣ a) ∧ (¬(m * n) ∣ a) := by sorry
-  
+lemma part_b (m n : ℤ) (hmn : Int.gcd m n ≠ 1) : ∃ (a : ℤ), (m ∣ a) ∧ (n ∣ a) ∧ (¬(m * n) ∣ a) := by 
+  let M := Int.gcd m n
+  use (m * n / M)
+  apply And.intro
+  ·use n / M; rw [dvd_mul_of_dvd_left]
+  sorry
+
+
 
 lemma part_c (x y m : ℤ) (hx : Int.gcd x m = 1) (hy : Int.gcd y m = 1) : Int.gcd (x * y) m = 1 := by 
   let a := Int.gcdA x m
