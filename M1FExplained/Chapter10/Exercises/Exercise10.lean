@@ -159,4 +159,8 @@ for any integer n > N it is possible to find integers s,t ≥ 0 satisfying
 s * a + t * b = n, but no such s,t exist satisfying sa+tb = N.
 -/
 
+lemma part_c (a b : ℤ) (ha : 0 < a) (hb : 0 < b) (hab : Int.gcd a b = 1) :
+  ∃ (N : ℤ), (∀ n > N, ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = n) 
+  ∧ (¬ ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = N) := by sorry
+
 end Chapter10.Exercise10
