@@ -15,42 +15,6 @@ one containing 4 O’Nuggets, and the other containing 9 O’Nuggets.
 Prove that for any integer n > 23, it is possible for Ivor to buy n O’Nuggets
 (assuming he has enough money).
 -/
-/-
-lemma part_a (n : ℕ) (hn : 23 < n) : ∃ (a b : ℕ), 9 * a + 4 * b = n := by
-  set m := n - 24 with hm
-  rw [show n = m + 24 by exact Iff.mp (Nat.sub_eq_iff_eq_add hn) rfl] at *
-  induction m with
-  | zero => use 0, 6
-  | succ m ih => 
-  rcases ih with ⟨a, b, hab⟩
-  have : b = 0 ∨ b = 1 ∨ 2 ≤ b := by sorry
-  apply Or.elim this
-  · intro h1
-    use (a - 3), 7
-    simp at hab
-    rw [Nat.mul_sub_left_distrib, hab]
-    norm_num
-    sorry
-  · intro 
-    | Or.inl h2 => 
-      rw [h2] at hab
-      simp at hab
-      use (a - 3), 8
-      norm_num
-      rw [show 9 * (a - 3) = 9 * a - 9 * 3 by sorry]
-      rw [hab]
-      norm_num
-      sorry
-    | Or.inr h3 =>  
-      use (a + 1), (b - 2)
-      rw [Nat.left_distrib, show 4 * (b - 2) = 4 * b - 4 * 2 by exact Nat.mul_sub_left_distrib 4 b 2, 
-          show 9 * a + 9 * 1 + (4 * b - 4 * 2) = 9 * a + 4 * b + 9 * 1 - 4 * 2 by exact?, hab]
-      simp
- -/     
-
-example (b : ℕ) : b = 0 ∨ b = 1 ∨ 2 ≤ b := by
-  
-sorry
 
 lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = n := by
   apply @Int.le_induction _ 24 ?h0 ?h1 n (show 24 ≤ n by exact hn)
@@ -81,9 +45,20 @@ lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧
             k = 9 * a + 4 := by exact id (Eq.symm hab)
             _ ≤ 9 * 2 + 4 := by rel [show a ≤ 2 by exact Iff.mp Int.lt_add_one_iff h3a']
         linarith
-    have : b = 0 ∨ b = 1 ∨ 2 ≤ b := by sorry
+    have : b = 0 ∨ b = 1 ∨ 2 ≤ b := by 
+      · by_cases h : b < 1
+        · left
+          rw [← Int.abs_lt_one_iff, abs_lt]
+          constructor 
+          <;> linarith
+        · right
+          push_neg at h
+          by_cases h' : b = 1
+          · left; exact h'
+          · right
+            have : 1 < b := by exact Ne.lt_of_le' h' h
+            exact this
     rcases this with (h1 | h2 | h3)
-    
   -- case: b = 0
     · rw [h1, mul_zero, add_zero] at hab
       use (a - 3), 7
@@ -115,13 +90,6 @@ lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧
         · exact hb'
         · rw [show 9 * (a + 1) + 4 * (b - 2) = 9 * a + 4 * b + 9 - 4 * 2 by ring, hab] 
           ring
-
-
-
-
-
-
-  -- prove 0 ≤ a - 3
       
 
 
