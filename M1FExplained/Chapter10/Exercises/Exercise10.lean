@@ -16,35 +16,34 @@ Prove that for any integer n > 23, it is possible for Ivor to buy n O’Nuggets
 (assuming he has enough money).
 -/
 
+/-
+The basic idea of the proof goes as follows:
+
+  Do induction on n starting at 24. Prove n = 24 trivially.
+  -- assume ∃ aₖ, bₖ, 9aₖ + 4bₖ = k
+  -- contidion on bₖ = 0, 1 or ≥ 2.
+  -- bₖ = 0:
+    -- aₖ₊₁ = aₖ - 3, bₖ₊₁ = 7 (since aₖ ≥ 3)
+  -- bₖ = 1:
+    -- aₖ₊₁ = aₖ - 3, bₖ₊₁ = 8 (since aₖ ≥ 3)
+  -- bₖ ≥ 2:
+    -- aₖ₊₁ = aₖ bₖ₊₁ = bₖ - 2 (since bₖ ≥ 2)
+
+The claim aₖ ≥ 3 in the first two cases can be proven easily 
+based on the assumption that n > 23 and the value of bₖ.
+-/
+
 lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = n := by
+  -- Prove the startment by induction on n.
   apply @Int.le_induction _ 24 ?h0 ?h1 n (show 24 ≤ n by exact hn)
+  -- Case: n = 24
   · use 0, 6
     simp
+  -- Case: 24 < n 
   · intros k hk
     intro
     |⟨a, b, ⟨ha, hb, hab⟩⟩ => 
-    have ha' : b = 0 ∨ b = 1 → 0 ≤ a - 3 := by 
-      · intro
-        | Or.inl b0 => 
-        rw [b0, mul_zero, add_zero] at hab
-        rw [sub_nonneg]
-        by_contra h3a 
-        push_neg at h3a
-        have : k ≤ 18 := by
-          · calc
-            k = 9 * a := by exact id (Eq.symm hab)
-            _ ≤ 9 * 2 := by rel [show a ≤ 2 by exact Iff.mp Int.lt_add_one_iff h3a]
-        linarith   
-        | Or.inr b1 => 
-        rw [b1, mul_one] at hab
-        rw [sub_nonneg]
-        by_contra h3a' 
-        push_neg at h3a'
-        have : k ≤ 22 := by
-          · calc
-            k = 9 * a + 4 := by exact id (Eq.symm hab)
-            _ ≤ 9 * 2 + 4 := by rel [show a ≤ 2 by exact Iff.mp Int.lt_add_one_iff h3a']
-        linarith
+  -- To condition on the value of b, we must have one of three cases.
     have : b = 0 ∨ b = 1 ∨ 2 ≤ b := by 
       · by_cases h : b < 1
         · left
@@ -58,53 +57,56 @@ lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧
           · right
             have : 1 < b := by exact Ne.lt_of_le' h' h
             exact this
+  -- In two of these cases, we know that 0 ≤ a - 3. 
+    have ha' : b = 0 ∨ b = 1 → 0 ≤ a - 3 := by 
+      · intro
+        | Or.inl b0 => 
+        rw [b0, mul_zero, add_zero] at hab
+        rw [sub_nonneg]
+        by_contra h3a 
+        push_neg at h3a
+        linarith  
+        | Or.inr b1 => 
+        rw [b1, mul_one] at hab
+        rw [sub_nonneg]
+        by_contra h3a' 
+        push_neg at h3a'
+        linarith
+  -- Condition over our three cases: b = 0 ∨ b = 1 ∨ 2 ≤ b.
     rcases this with (h1 | h2 | h3)
-  -- case: b = 0
+  -- Case: b = 0.
     · rw [h1, mul_zero, add_zero] at hab
       use (a - 3), 7
       constructor
-  -- 0 ≤ a - 3
+  -- 0 ≤ a - 3.
       · exact ha' (Or.inl h1)
-  -- 0 ≤ 7 ∧ 9 * (a - 3) + 4 * 7 = k + 1 
+  -- 0 ≤ 7 ∧ 9 * (a - 3) + 4 * 7 = k + 1. 
       · simp
         rw [Int.mul_sub, hab, sub_add]
         norm_num
-  -- case: b = 1
+  -- Case: b = 1.
     · rw [h2, mul_one] at hab
       use (a - 3), 8
       constructor
-  -- 0 ≤ a - 3
+  -- 0 ≤ a - 3.
       · exact ha' (Or.inr h2)
-  -- 0 ≤ 8 ∧ 9 * (a - 3) + 4 * 8 = k + 1
+  -- 0 ≤ 8 ∧ 9 * (a - 3) + 4 * 8 = k + 1.
       · simp
         rw [Int.mul_sub, show 9 * a - 9 * 3 + 4 * 8 = 9 * a + 4 - 9 * 3 + 4 * 7 by ring, hab]
         ring
-  -- case: 2 ≤ b
+  -- Case: 2 ≤ b.
     · have hb' : 0 ≤ b - 2 := by exact Int.sub_nonneg_of_le h3
       use (a + 1), (b - 2)
       constructor
-  -- 0 ≤ a
+  -- 0 ≤ a.
       · exact Int.le_add_one ha
-  -- 0 ≤ b - 2 ∧ 9 * a + 4 * (b - 2) = k + 1
+  -- 0 ≤ b - 2 ∧ 9 * a + 4 * (b - 2) = k + 1.
       · constructor
         · exact hb'
         · rw [show 9 * (a + 1) + 4 * (b - 2) = 9 * a + 4 * b + 9 - 4 * 2 by ring, hab] 
           ring
-      
 
 
-  /-
-  Do induction on n. Prove n = 24 trivially
-  -- assume ∃ aₖ, bₖ, 9aₖ + 4bₖ = k
-  -- contidion on bₖ = 0, 1, else
-  -- bₖ = 0:
-    -- aₖ₊₁ = aₖ - 3, bₖ₊₁ = 7 (since aₖ ≥ 3)
-  -- bₖ = 1:
-    -- aₖ₊₁ = aₖ - 3, bₖ₊₁ = 8 (since aₖ ≥ 3)
-  -- bₖ ≥ 2:
-    -- aₖ₊₁ = aₖ bₖ₊₁ = bₖ - 2 (since bₖ ≥ 2)
-  
-  -/
 
 -- part b
 
