@@ -15,9 +15,46 @@ one containing 4 O’Nuggets, and the other containing 9 O’Nuggets.
 Prove that for any integer n > 23, it is possible for Ivor to buy n O’Nuggets
 (assuming he has enough money).
 -/
-#check induction
-lemma part_a (n : ℕ) (hn : 23 < n) : ∃ (a b : ℕ), 4 * a + 9 * b = n := by
-  induction (n - 24) with
+
+lemma part_a (n : ℕ) (hn : 23 < n) : ∃ (a b : ℕ), 9 * a + 4 * b = n := by
+  set m := n - 24 with hm
+  rw [show n = m + 24 by exact Iff.mp (Nat.sub_eq_iff_eq_add hn) rfl] at *
+  induction m with
+  | zero => use 0, 6
+  | succ m ih => 
+  rcases ih with ⟨a, b, hab⟩
+  have : b = 0 ∨ b = 1 ∨ 2 ≤ b := by sorry
+  apply Or.elim this
+  · intro h1
+    use (a - 3), 7
+    simp at hab
+    rw [Nat.mul_sub_left_distrib, hab]
+    norm_num
+    sorry
+  · intro 
+    | Or.inl h2 => 
+      rw [h2] at hab
+      simp at hab
+      use (a - 3), 8
+      norm_num
+      rw [show 9 * (a - 3) = 9 * a - 9 * 3 by sorry]
+      rw [hab]
+      norm_num
+      sorry
+    | Or.inr h3 =>  
+      use (a + 1), (b - 2)
+      rw [Nat.left_distrib, show 4 * (b - 2) = 4 * b - 4 * 2 by exact Nat.mul_sub_left_distrib 4 b 2, 
+          show 9 * a + 9 * 1 + (4 * b - 4 * 2) = 9 * a + 4 * b + 9 * 1 - 4 * 2 by exact?, hab]
+      simp
+      
+      
+
+    
+    
+    
+
+
+
   sorry
 
   /-
