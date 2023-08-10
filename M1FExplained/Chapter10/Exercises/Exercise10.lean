@@ -15,7 +15,7 @@ one containing 4 O’Nuggets, and the other containing 9 O’Nuggets.
 Prove that for any integer n > 23, it is possible for Ivor to buy n O’Nuggets
 (assuming he has enough money).
 -/
-
+/-
 lemma part_a (n : ℕ) (hn : 23 < n) : ∃ (a b : ℕ), 9 * a + 4 * b = n := by
   set m := n - 24 with hm
   rw [show n = m + 24 by exact Iff.mp (Nat.sub_eq_iff_eq_add hn) rfl] at *
@@ -46,16 +46,84 @@ lemma part_a (n : ℕ) (hn : 23 < n) : ∃ (a b : ℕ), 9 * a + 4 * b = n := by
       rw [Nat.left_distrib, show 4 * (b - 2) = 4 * b - 4 * 2 by exact Nat.mul_sub_left_distrib 4 b 2, 
           show 9 * a + 9 * 1 + (4 * b - 4 * 2) = 9 * a + 4 * b + 9 * 1 - 4 * 2 by exact?, hab]
       simp
+ -/     
+
+example (b : ℕ) : b = 0 ∨ b = 1 ∨ 2 ≤ b := by
+  
+sorry
+
+lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = n := by
+  apply @Int.le_induction _ 24 ?h0 ?h1 n (show 24 ≤ n by exact hn)
+  · use 0, 6
+    simp
+  · intros k hk
+    intro
+    |⟨a, b, ⟨ha, hb, hab⟩⟩ => 
+    have ha' : b = 0 ∨ b = 1 → 0 ≤ a - 3 := by 
+      · intro
+        | Or.inl b0 => 
+        rw [b0, mul_zero, add_zero] at hab
+        rw [sub_nonneg]
+        by_contra h3a 
+        push_neg at h3a
+        have : k ≤ 18 := by
+          · calc
+            k = 9 * a := by exact id (Eq.symm hab)
+            _ ≤ 9 * 2 := by rel [show a ≤ 2 by exact Iff.mp Int.lt_add_one_iff h3a]
+        linarith   
+        | Or.inr b1 => 
+        rw [b1, mul_one] at hab
+        rw [sub_nonneg]
+        by_contra h3a' 
+        push_neg at h3a'
+        have : k ≤ 22 := by
+          · calc
+            k = 9 * a + 4 := by exact id (Eq.symm hab)
+            _ ≤ 9 * 2 + 4 := by rel [show a ≤ 2 by exact Iff.mp Int.lt_add_one_iff h3a']
+        linarith
+    have : b = 0 ∨ b = 1 ∨ 2 ≤ b := by sorry
+    rcases this with (h1 | h2 | h3)
+    
+  -- case: b = 0
+    · rw [h1, mul_zero, add_zero] at hab
+      use (a - 3), 7
+      constructor
+  -- 0 ≤ a - 3
+      · exact ha' (Or.inl h1)
+  -- 0 ≤ 7 ∧ 9 * (a - 3) + 4 * 7 = k + 1 
+      · simp
+        rw [Int.mul_sub, hab, sub_add]
+        norm_num
+  -- case: b = 1
+    · rw [h2, mul_one] at hab
+      use (a - 3), 8
+      constructor
+  -- 0 ≤ a - 3
+      · exact ha' (Or.inr h2)
+  -- 0 ≤ 8 ∧ 9 * (a - 3) + 4 * 8 = k + 1
+      · simp
+        rw [Int.mul_sub, show 9 * a - 9 * 3 + 4 * 8 = 9 * a + 4 - 9 * 3 + 4 * 7 by ring, hab]
+        ring
+  -- case: 2 ≤ b
+    · have hb' : 0 ≤ b - 2 := by exact Int.sub_nonneg_of_le h3
+      use (a + 1), (b - 2)
+      constructor
+  -- 0 ≤ a
+      · exact Int.le_add_one ha
+  -- 0 ≤ b - 2 ∧ 9 * a + 4 * (b - 2) = k + 1
+      · constructor
+        · exact hb'
+        · rw [show 9 * (a + 1) + 4 * (b - 2) = 9 * a + 4 * b + 9 - 4 * 2 by ring, hab] 
+          ring
+
+
+
+
+
+
+  -- prove 0 ≤ a - 3
       
-      
 
-    
-    
-    
-
-
-
-  sorry
 
   /-
   Do induction on n. Prove n = 24 trivially
@@ -69,7 +137,6 @@ lemma part_a (n : ℕ) (hn : 23 < n) : ∃ (a b : ℕ), 9 * a + 4 * b = n := by
     -- aₖ₊₁ = aₖ bₖ₊₁ = bₖ - 2 (since bₖ ≥ 2)
   
   -/
-sorry
 
 -- part b
 
