@@ -151,7 +151,7 @@ lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 :=
     simp at h5
 
 -- part c
-
+#check Nat.prime_iff
 /-
 Generalize this question, replacing 4 and 9 by any pair a,b of coprime
 positive integers: find an integer N (depending on a and b), such that
@@ -161,6 +161,29 @@ s * a + t * b = n, but no such s,t exist satisfying sa+tb = N.
 
 lemma part_c (a b : ℤ) (ha : 0 < a) (hb : 0 < b) (hab : Int.gcd a b = 1) :
   ∃ (N : ℤ), (∀ n > N, ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = n) 
-  ∧ (¬ ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = N) := by sorry
+  ∧ (¬ ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = N) := by 
+  use (a - 1) * (b - 1)
+  constructor
+  · intros n hn
+    have hbez1 : ∃ (x₀ y₀ : ℤ), a * x₀ + b * y₀ = 1 := by sorry
+    have hbezn : ∃ (x₁ y₁ : ℤ), a * x₁ + b * y₁ = n := by sorry
+    rcases hbezn with ⟨x₁, y₁, hxy⟩
+    set t := sInf {t : ℤ | 0 < t ∧ 0 ≤ y₁ + t * a}
+    have : 0 ≤ x₁ - t * b := by sorry
+    use (x₁ - t * b), (y₁ + t * a) 
+    repeat (any_goals constructor)
+    · exact this
+    · sorry -- definition of t
+    · ring
+      rw [mul_comm]
+      assumption
+  · by_contra h 
+    match h with
+    | ⟨s, t, ⟨hs, ht, hst⟩⟩ =>
+    sorry 
+
+
+  
+  sorry
 
 end Chapter10.Exercise10
