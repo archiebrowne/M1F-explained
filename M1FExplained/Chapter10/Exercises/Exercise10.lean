@@ -33,7 +33,7 @@ The claim aₖ ≥ 3 in the first two cases can be proven easily
 based on the assumption that n > 23 and the value of bₖ.
 -/
 
-lemma part_a' (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = n := by
+lemma part_a (n : ℤ) (hn : 23 < n) : ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = n := by
   -- Prove the startment by induction on n.
   apply @Int.le_induction _ 24 ?h0 ?h1 n (show 24 ≤ n by exact hn)
   -- Case: n = 24
@@ -113,42 +113,39 @@ Perversely, however, Ivor decides that he must buy exactly 23 O’Nuggets,
 no more and no less. Is he able to do this?
 -/
 
-example (a : ℤ) (h1 : 0 ≤ a) (h2 : a < 3) : a = 0 ∨ a = 1 ∨ a = 2 := by sorry
-
-
 lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 := by
   rintro ⟨a, b, ha, hb, hab⟩
   have ha3 : a < 3 := by
-    · by_contra h
-      push_neg at h
-      have : 27 ≤ 23 := by 
-        · calc
-            27 = 9 * 3 + 4 * 0 := by norm_num
-            _  ≤ 9 * a + 4 * b := by rel [h, hb]
-            _  = 23            := by exact hab
-      contradiction
-  have : a = 0 ∨ a = 1 ∨ a = 2 := by sorry
+    by_contra h
+    push_neg at h
+    have : (27 : ℤ) ≤ 23 := by 
+      calc
+        27 = 9 * 3 + 4 * 0 := by norm_num
+        _  ≤ 9 * a + 4 * b := by rel [h, hb]
+        _  = 23            := by exact hab
+    contradiction
+  have : a = 0 ∨ a = 1 ∨ a = 2 := by interval_cases a <;> tauto
   have hb' : b = b.natAbs := by exact Eq.symm (Int.natAbs_of_nonneg hb)
   rcases this with (h1 | h2 | h3)
   · rw [h1, mul_zero, zero_add] at hab
     have h23 : 4 ∣ 23 := by
-      · use b.natAbs
-        rw [hb'] at hab
-        exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
+      use b.natAbs
+      rw [hb'] at hab
+      exact Iff.mp Int.ofNat_inj (Eq.symm hab)
     simp at h23
   · rw [h2, mul_one, show 9 + 4 * b = 23 ↔ 4 * b = 23 - 9 by 
         constructor <;> intro <;> linarith] at hab
     have h14 : 4 ∣ 14 := by 
-      · use b.natAbs
-        rw [hb'] at hab
-        exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
+      use b.natAbs
+      rw [hb'] at hab
+      exact Iff.mp Int.ofNat_inj (Eq.symm hab)
     simp at h14
   · rw [h3, show 9 * 2 + 4 * b = 23 ↔ 4 * b = 5 by 
         constructor <;> intro <;> linarith] at hab
     have h5 : 4 ∣ 5 := by
-      · use b.natAbs
-        rw [hb'] at hab
-        exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
+      use b.natAbs
+      rw [hb'] at hab
+      exact Iff.mp Int.ofNat_inj (Eq.symm hab)
     simp at h5
 
 -- part c
