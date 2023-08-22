@@ -113,40 +113,44 @@ Perversely, however, Ivor decides that he must buy exactly 23 O’Nuggets,
 no more and no less. Is he able to do this?
 -/
 
+example (a : ℤ) (h1 : 0 ≤ a) (h2 : a < 3) : a = 0 ∨ a = 1 ∨ a = 2 := by sorry
+
+
 lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 := by
   rintro ⟨a, b, ha, hb, hab⟩
   -- have : 0 ≤ 9 * a + 4 * b := by sorry
   have ha3 : a < 3 := by
     · by_contra h
       push_neg at h
-      have : 23 ≥ 27 := by 
+      have : 27 ≤ 23 := by 
         · calc
-            23 = 9 * a + 4 * b := by sorry --exact id (Eq.symm hab)
-             _ ≥ 9 * 3 + 4 * b := by sorry --rel [h]
-             _ ≥ 9 * 3 + 4 * 0 := by sorry -- rel [hb]
-             _ ≥ 27 := by sorry --norm_num
+            27 = 9 * 3 + 4 * 0 := by norm_num
+            _  ≤ 9 * a + 4 * b := by rel [h, hb]
+            _  = 23 := by exact hab
       contradiction
   have : a = 0 ∨ a = 1 ∨ a = 2 := by sorry
   rcases this with (h1 | h2 | h3)
   · rw [h1, mul_zero, zero_add] at hab
     have h23 : 4 ∣ 23 := by
       · use b.natAbs
-        rw [show b = b.natAbs by sorry] at hab
+        rw [show b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)] at hab
         exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
     simp at h23
-  · rw [h2, mul_one, show 9 + 4 * b = 23 ↔ 4 * b = 23 - 9 by sorry] at hab 
+  · rw [h2, mul_one, show 9 + 4 * b = 23 ↔ 4 * b = 23 - 9 by 
+        constructor <;> intro h <;> linarith] at hab 
     norm_num at hab
     have h14 : 4 ∣ 14 := by 
       · use b.natAbs
-        rw [show b = b.natAbs by sorry] at hab
+        rw [show b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)] at hab
         exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
     simp at h14
   · rw [h3] at hab
     norm_num at hab
-    rw [show 18 + 4 * b = 23 ↔ 4 * b = 5 by sorry] at hab
+    rw [show 18 + 4 * b = 23 ↔ 4 * b = 5 by 
+        constructor <;> intro h <;> linarith] at hab
     have h5 : 4 ∣ 5 := by
       · use b.natAbs
-        rw [show b = b.natAbs by sorry] at hab
+        rw [show b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)] at hab
         exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
     simp at h5
 
