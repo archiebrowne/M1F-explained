@@ -118,7 +118,6 @@ example (a : ℤ) (h1 : 0 ≤ a) (h2 : a < 3) : a = 0 ∨ a = 1 ∨ a = 2 := by 
 
 lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 := by
   rintro ⟨a, b, ha, hb, hab⟩
-  -- have : 0 ≤ 9 * a + 4 * b := by sorry
   have ha3 : a < 3 := by
     · by_contra h
       push_neg at h
@@ -126,37 +125,34 @@ lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 :=
         · calc
             27 = 9 * 3 + 4 * 0 := by norm_num
             _  ≤ 9 * a + 4 * b := by rel [h, hb]
-            _  = 23 := by exact hab
+            _  = 23            := by exact hab
       contradiction
   have : a = 0 ∨ a = 1 ∨ a = 2 := by sorry
-  have hb' : b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)
+  have hb' : b = b.natAbs := by exact Eq.symm (Int.natAbs_of_nonneg hb)
   rcases this with (h1 | h2 | h3)
   · rw [h1, mul_zero, zero_add] at hab
     have h23 : 4 ∣ 23 := by
       · use b.natAbs
-        rw [show b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)] at hab
+        rw [hb'] at hab
         exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
     simp at h23
   · rw [h2, mul_one, show 9 + 4 * b = 23 ↔ 4 * b = 23 - 9 by 
-        constructor <;> intro h <;> linarith] at hab 
-    norm_num at hab
+        constructor <;> intro <;> linarith] at hab
     have h14 : 4 ∣ 14 := by 
       · use b.natAbs
-        rw [show b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)] at hab
+        rw [hb'] at hab
         exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
     simp at h14
-  · rw [h3] at hab
-    norm_num at hab
-    rw [show 18 + 4 * b = 23 ↔ 4 * b = 5 by 
-        constructor <;> intro h <;> linarith] at hab
+  · rw [h3, show 9 * 2 + 4 * b = 23 ↔ 4 * b = 5 by 
+        constructor <;> intro <;> linarith] at hab
     have h5 : 4 ∣ 5 := by
       · use b.natAbs
-        rw [show b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)] at hab
+        rw [hb'] at hab
         exact Iff.mp Int.ofNat_inj (id (Eq.symm hab))
     simp at h5
 
 -- part c
-#check Nat.prime_iff
+
 /-
 Generalize this question, replacing 4 and 9 by any pair a,b of coprime
 positive integers: find an integer N (depending on a and b), such that
