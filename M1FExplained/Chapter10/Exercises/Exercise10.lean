@@ -154,31 +154,61 @@ lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 :=
 Generalize this question, replacing 4 and 9 by any pair a,b of coprime
 positive integers: find an integer N (depending on a and b), such that
 for any integer n > N it is possible to find integers s,t ≥ 0 satisfying
-s * a + t * b = n, but no such s,t exist satisfying sa+tb = N.
+s * a + t * b = n, but no such s,t exist satisfying s * a + t * b = N.
 -/
 
+example (t b : ℤ) (hb : 0 < b): t * b / t = b := by sorry
+
+#check Int.mul_ediv_assoc
+example (s t a b : ℤ) (ha : 0 < a) (hb : 0 < b) (hab : s * a + t * b = 0) : (s = 0 ∧ t = 0) ∨ (a ∣ b ∨ b ∣ a) := by 
+  apply Or.elim (Classical.em (s = 0))
+  <;> intro hs
+  · left
+    rw [hs, zero_mul, zero_add] at hab
+    have : t = 0 := by sorry
+    tauto
+  · right
+    apply Or.elim (Classical.em (t < s))
+    <;> intro hst
+    · left
+      use -(s / t)
+      rw [Int.mul_neg, ← Int.sub_eq_zero, Int.sub_neg, Int.add_comm]
+      have : (s * a + t * b) / t = 0 := by 
+        rw [hab]; norm_num
+      rw [Int.add_ediv_of_dvd_right] at this
+      · rw [← Int.mul_ediv_assoc, mul_comm]
+      · use b
+        
+      
+    · right
+      sorry
+sorry
+
 lemma part_c (a b : ℤ) (ha : 0 < a) (hb : 0 < b) (hab : Int.gcd a b = 1) :
-  ∃ (N : ℤ), (∀ n > N, ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = n) 
-  ∧ (¬ ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = N) := by 
+  ∃ (N : ℤ), (∀ n ≥ N, ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = n) 
+  ∧ (¬ ∃ (s t : ℤ), 0 ≤ s ∧ 0 ≤ t ∧ s * a + t * b = N - 1) := by 
   use (a - 1) * (b - 1)
   constructor
   · intros n hn
     have hbez1 : ∃ (x₀ y₀ : ℤ), a * x₀ + b * y₀ = 1 := by sorry
     have hbezn : ∃ (x₁ y₁ : ℤ), a * x₁ + b * y₁ = n := by sorry
     rcases hbezn with ⟨x₁, y₁, hxy⟩
-    set t := sInf {t : ℤ | 0 < t ∧ 0 ≤ y₁ + t * a}
-    have : 0 ≤ x₁ - t * b := by sorry
+    set t := Inf {t : ℤ | 0 < t ∧ 0 ≤ y₁ + t * a} with ht
     use (x₁ - t * b), (y₁ + t * a) 
     repeat (any_goals constructor)
-    · exact this
+    · sorry
     · sorry -- definition of t
     · ring
       rw [mul_comm]
-      assumption
+      sorry
   · by_contra h 
     match h with
-    | ⟨s, t, ⟨hs, ht, hst⟩⟩ =>
-    sorry 
+    | ⟨s, t, ⟨hs, ht, hst⟩⟩ => 
+    rw [show (a - 1) * (b - 1) - 1 = a * b - a - b by ring] at hst
+    have : a * (s - b + 1) + b * (t + 1) = 0 := by sorry
+    
+    
+    sorry
 
 
   
