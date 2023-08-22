@@ -129,6 +129,7 @@ lemma part_b : ¬ ∃ (a b : ℤ), 0 ≤ a ∧ 0 ≤ b ∧ 9 * a + 4 * b = 23 :=
             _  = 23 := by exact hab
       contradiction
   have : a = 0 ∨ a = 1 ∨ a = 2 := by sorry
+  have hb' : b = b.natAbs by exact Eq.symm (Int.natAbs_of_nonneg hb)
   rcases this with (h1 | h2 | h3)
   · rw [h1, mul_zero, zero_add] at hab
     have h23 : 4 ∣ 23 := by
